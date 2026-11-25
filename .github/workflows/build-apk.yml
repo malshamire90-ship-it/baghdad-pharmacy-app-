@@ -1,5 +1,3 @@
-
-
 name: Build Flutter APK
 
 on:
@@ -34,18 +32,7 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --project-name baghdad_pharmacy_app .
           fi
-          python3 -c '
-          import glob, re
-          for path in glob.glob("android/**/build.gradle*", recursive=True) + glob.glob("android/**/settings.gradle*", recursive=True):
-              with open(path, "r", encoding="utf-8") as f:
-                  s = f.read()
-              s = re.sub(r"ext\.kotlin_version\s*=\s*[\x27\"][^\x27\"]+[\x27\"]", "ext.kotlin_version = \x271.9.24\x27", s)
-              s = re.sub(r"(id\s+[\x27\"]org\.jetbrains\.kotlin\.android[\x27\"]\s+version\s+)[\x27\"][^\x27\"]+[\x27\"]", r"\g<1>\x271.9.24\x27", s)
-              s = re.sub(r"(com\.android\.tools\.build:gradle:)[^\x27\"\s]+", r"\g<1>8.3.2", s)
-              s = re.sub(r"(id\s+[\x27\"]com\.android\.application[\x27\"]\s+version\s+)[\x27\"][^\x27\"]+[\x27\"]", r"\g<1>\x278.3.2\x27", s)
-              with open(path, "w", encoding="utf-8") as f:
-                  f.write(s)
-          '
+          find android -name "*.gradle*" -exec sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.24'/g; s/org.jetbrains.kotlin.android\" version \"[^\"]*\"/org.jetbrains.kotlin.android\" version \"1.9.24\"/g" {} +
 
       - name: Install dependencies
         run: flutter pub get
